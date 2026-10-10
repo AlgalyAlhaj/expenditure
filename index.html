@@ -8,24 +8,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#1D2B39;
-    --ink-soft:#3C4A57;
-    --paper:#F7F2E6;
-    --paper-edge:#EFE7D4;
-    --line:#DACFAF;
-    --stamp:#9C2B2B;
-    --stamp-soft:#C1554F;
-    --brass:#A9822F;
-    --muted:#7A7160;
-    --ok-bg:#EFE9D6;
+    --ink:#000000;
+    --ink-soft:#333333;
+    --paper:#FFFFFF;
+    --paper-edge:#BEBEBE;
+    --line:#8C8C8C;
+    --stamp:#000000;
+    --stamp-soft:#333333;
+    --brass:#000000;
+    --muted:#555555;
+    --ok-bg:#EFEFEF;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
-    background:
-      radial-gradient(circle at 12% 8%, #EDE3C8 0%, transparent 45%),
-      radial-gradient(circle at 88% 92%, #E6DAB9 0%, transparent 40%),
-      #DED2AE;
+    background:#F2F2F2;
     min-height:100vh;
     font-family:'IBM Plex Sans Arabic', sans-serif;
     color:var(--ink);
@@ -46,26 +43,26 @@
     font-size:14px;
     font-weight:600;
     border:1.5px solid var(--ink);
-    background:#FBF8EF;
+    background:#FFFFFF;
     color:var(--ink);
     padding:9px 16px;
     border-radius:3px;
     cursor:pointer;
     transition:transform .08s ease, background .15s ease;
   }
-  .toolbar button:hover{background:#fff;}
+  .toolbar button:hover{background:#EFEFEF;}
   .toolbar button:active{transform:translateY(1px);}
   .toolbar button.primary{
     background:var(--stamp);
     border-color:var(--stamp);
-    color:#FBF3ED;
+    color:#FFFFFF;
   }
   .toolbar button.primary:hover{background:var(--stamp-soft);}
   .toolbar .spacer{flex:1;}
   .toolbar .status{
     font-size:12.5px;
     color:var(--ink-soft);
-    background:#FBF8EF;
+    background:#FFFFFF;
     border:1px dashed var(--line);
     padding:6px 10px;
     border-radius:3px;
@@ -76,7 +73,8 @@
     max-width:900px;
     margin:0 auto;
     background:var(--paper);
-    box-shadow:0 1px 0 var(--paper-edge), 0 18px 40px -20px rgba(29,43,57,.55), 0 2px 8px rgba(29,43,57,.12);
+    border:1.5px solid #000;
+    box-shadow:0 10px 26px -18px rgba(0,0,0,.45);
     padding:44px 48px 52px;
     position:relative;
   }
@@ -92,37 +90,37 @@
   .bismillah{
     font-family:'Amiri', serif;
     font-style:italic;
-    font-size:17px;
+    font-size:19px;
     color:var(--ink-soft);
     margin:0 0 10px;
   }
   header.letterhead h1{
     font-family:'Amiri', serif;
     font-weight:700;
-    font-size:26px;
+    font-size:30px;
     margin:0 0 8px;
     color:var(--stamp);
     letter-spacing:.3px;
   }
-  .addr{margin:2px 0; font-size:14px; color:var(--ink-soft);}
-  .phones{margin:2px 0 8px; font-size:14px; font-weight:600; color:var(--ink);}
-  .email{margin:0; font-size:13.5px; color:var(--muted); direction:ltr; display:inline-block;}
+  .addr{margin:2px 0; font-size:15.5px; color:var(--ink-soft);}
+  .phones{margin:2px 0 8px; font-size:15.5px; font-weight:600; color:var(--ink);}
+  .email{margin:0; font-size:15px; color:var(--muted); direction:ltr; display:inline-block;}
   .email strong{color:var(--brass); font-weight:600;}
 
   .rule{height:6px; margin:18px 0 22px; border-top:3px solid var(--ink); border-bottom:1px solid var(--ink);}
 
-  section.meta{font-size:15px; line-height:1.9;}
+  section.meta{font-size:17px; line-height:1.9;}
   .meta-row{margin-bottom:14px; text-decoration:underline; text-decoration-color:var(--line);}
   .meta-row label{font-weight:700;}
-  .salute{font-weight:700; font-size:16px; margin:4px 0 2px;}
+  .salute{font-weight:700; font-size:18px; margin:4px 0 2px;}
   .honor{font-weight:700; margin:0 0 10px; padding-right:2px;}
   .greeting{font-weight:700; text-align:center; margin:4px 0 14px;}
   .list-title{
-    text-align:center; font-weight:700; font-size:18px;
+    text-align:center; font-weight:700; font-size:20px;
     text-decoration:underline; margin:0 0 8px;
   }
   .subject{
-    text-align:center; font-weight:700; font-size:19px; margin:4px 0 22px;
+    text-align:center; font-weight:700; font-size:21px; margin:4px 0 22px;
   }
 
   /* ---------- inline editable inputs ---------- */
@@ -139,35 +137,35 @@
   input.inline-input:focus, textarea.inline-input:focus{
     outline:none;
     border-bottom:1px solid var(--stamp);
-    background:rgba(156,43,43,.06);
+    background:rgba(0,0,0,.07);
   }
   .inline-input.small{width:70px; text-align:center;}
   .inline-input.wide{width:280px;}
-  .inline-input.full{width:100%; text-align:center; font-size:19px; font-weight:700;}
-  #dateInput{width:150px; text-align:center; font-weight:700;}
+  .inline-input.full{width:100%; text-align:center; font-size:21px; font-weight:700;}
+  #dateInput{width:160px; text-align:center; font-weight:700;}
 
   /* ---------- table ---------- */
   table.items{
     width:100%;
     border-collapse:collapse;
     margin-top:6px;
-    font-size:14.5px;
+    font-size:16px;
   }
   table.items th{
-    background:var(--ink);
-    color:#F3EDDD;
+    background:#000;
+    color:#FFFFFF;
     font-family:'Amiri', serif;
     font-weight:700;
-    font-size:16px;
+    font-size:18px;
     padding:10px 8px;
-    border:1px solid var(--ink);
+    border:1px solid #000;
   }
   table.items td{
     border:1px solid var(--line);
     padding:7px 10px;
     vertical-align:middle;
   }
-  table.items tbody tr:nth-child(even){background:rgba(169,130,47,.06);}
+  table.items tbody tr:nth-child(even){background:rgba(0,0,0,.04);}
   td.amount-cell{text-align:center; direction:ltr;}
   td input.row-desc{
     border:none; background:transparent; width:100%;
@@ -180,7 +178,7 @@
     text-align:center; padding:2px 4px; font-weight:600;
   }
   td input.row-desc:focus, td input.row-amount:focus{
-    outline:none; background:rgba(156,43,43,.08); border-radius:2px;
+    outline:none; background:rgba(0,0,0,.08); border-radius:2px;
   }
   td.del-cell{
     width:38px; text-align:center; padding:4px; border:none; background:transparent;
@@ -194,30 +192,30 @@
     font-size:14px; line-height:1;
     cursor:pointer;
   }
-  button.del-btn:hover{background:var(--stamp); color:#fff;}
+  button.del-btn:hover{background:#000; color:#fff;}
 
   tfoot .total-row td{
     border:none;
     border-top:3px double var(--ink);
     font-weight:700;
-    font-size:17px;
+    font-size:19px;
     padding:12px 10px;
   }
   tfoot .total-row td:first-child{
-    background:var(--ink);
-    color:#F3EDDD;
+    background:#000;
+    color:#FFFFFF;
     text-align:center;
     font-family:'Amiri', serif;
-    font-size:18px;
+    font-size:20px;
     border-top:3px double var(--ink);
   }
   .currency-tag{font-weight:700; color:var(--brass); margin-left:6px; direction:ltr;}
   .total-input{
     border:none; background:transparent; text-align:center;
-    font-family:inherit; font-weight:700; font-size:17px; color:var(--ink);
+    font-family:inherit; font-weight:700; font-size:19px; color:var(--ink);
     width:70%; direction:ltr;
   }
-  .total-input:focus{outline:none; background:rgba(156,43,43,.08); border-radius:2px;}
+  .total-input:focus{outline:none; background:rgba(0,0,0,.08); border-radius:2px;}
   button#btnLock{
     border:none; background:transparent; cursor:pointer; font-size:16px;
   }
@@ -226,7 +224,7 @@
     margin-top:24px;
     font-weight:700;
     text-align:center;
-    font-size:15.5px;
+    font-size:17px;
     line-height:1.9;
   }
   .words-editable{
@@ -235,7 +233,16 @@
   }
   .words-editable:focus{
     border-bottom:1px dotted var(--stamp);
-    background:rgba(156,43,43,.06);
+    background:rgba(0,0,0,.06);
+  }
+
+  .copyright{
+    margin:22px 0 0;
+    text-align:center;
+    font-size:10.5px;
+    color:#666666;
+    letter-spacing:.4px;
+    direction:ltr;
   }
 
   .no-print{}
@@ -247,58 +254,60 @@
 
   @page{ size: A4; margin: 10mm 11mm; }
   @media print{
-    html,body{background:#fff; padding:0; margin:0; font-size:12px;}
+    html,body{background:#fff; padding:0; margin:0;}
     .toolbar, footer.hint{display:none !important;}
     .sheet{
+      border:none;
       box-shadow:none;
       max-width:100%;
       margin:0;
       padding:0;
     }
     .sheet::before{display:none;}
-    header.letterhead, section.meta, .words-line, tfoot{
+    header.letterhead, section.meta, .words-line, .copyright, tfoot{
       break-inside:avoid; page-break-inside:avoid;
     }
 
-    /* tighten the letterhead */
-    .bismillah{font-size:12.5px; margin:0 0 3px;}
-    header.letterhead h1{font-size:19px; margin:0 0 3px;}
-    .addr{font-size:11px; margin:1px 0;}
-    .phones{font-size:11px; margin:1px 0 4px;}
-    .email{font-size:10.5px;}
-    .rule{height:4px; margin:8px 0 10px;}
+    /* --- enlarged letterhead --- */
+    .bismillah{font-size:15px; margin:0 0 4px;}
+    header.letterhead h1{font-size:23px; margin:0 0 4px;}
+    .addr{font-size:13px; margin:1px 0;}
+    .phones{font-size:13px; margin:1px 0 5px;}
+    .email{font-size:12.5px;}
+    .rule{height:4px; margin:10px 0 12px;}
 
-    /* tighten the meta block */
-    section.meta{font-size:12px; line-height:1.35;}
-    .meta-row{margin-bottom:5px;}
-    .salute{font-size:12.5px; margin:2px 0 1px;}
+    /* --- enlarged meta block --- */
+    section.meta{font-size:14px; line-height:1.6;}
+    .meta-row{margin-bottom:6px;}
+    .salute{font-size:14.5px; margin:2px 0 1px;}
     .honor{margin:0 0 4px;}
-    .greeting{margin:2px 0 6px;}
-    .list-title{font-size:13.5px; margin:0 0 4px;}
-    .subject{font-size:14.5px; margin:2px 0 8px;}
+    .greeting{margin:2px 0 8px;}
+    .list-title{font-size:15.5px; margin:0 0 4px;}
+    .subject{font-size:17px; margin:2px 0 10px;}
 
-    /* tighten the table */
-    table.items{ break-inside:auto; margin-top:2px; font-size:12px; }
+    /* --- enlarged table --- */
+    table.items{ break-inside:auto; margin-top:2px; font-size:14px; }
     table.items thead{ display:table-header-group; }
     table.items tfoot{ display:table-footer-group; }
     table.items tbody tr{ break-inside:avoid; page-break-inside:avoid; }
-    table.items th{ padding:4px 6px; font-size:13px; }
-    table.items td{ padding:3px 6px; }
+    table.items th{ padding:5px 6px; font-size:15.5px; }
+    table.items td{ padding:4px 6px; }
     td input.row-desc, td input.row-amount{ padding:0 4px; }
-    tfoot .total-row td{ padding:5px 8px; font-size:13px; }
-    tfoot .total-row td:first-child{ font-size:13.5px; }
+    tfoot .total-row td{ padding:7px 8px; font-size:15px; }
+    tfoot .total-row td:first-child{ font-size:15.5px; }
 
-    /* tighten the words line */
-    .words-line{ margin-top:10px; font-size:12px; line-height:1.4; }
+    /* --- enlarged words + copyright --- */
+    .words-line{ margin-top:12px; font-size:13.5px; line-height:1.5; }
+    .copyright{ margin-top:8px; font-size:9.5px; }
 
     .no-print{ display:none !important; }
   }
 
   @media (max-width: 640px){
     .sheet{padding:26px 18px 34px;}
-    header.letterhead h1{font-size:20px;}
-    .subject{font-size:16px;}
-    table.items{font-size:12.5px;}
+    header.letterhead h1{font-size:22px;}
+    .subject{font-size:17px;}
+    table.items{font-size:14px;}
     .inline-input.wide{width:160px;}
   }
 </style>
@@ -362,6 +371,8 @@
     </table>
 
     <p class="words-line">((<span id="wordsText" contenteditable="true" class="words-editable"></span>))</p>
+
+    <p class="copyright">Powered by AlgalyAlhaj for digital solutions</p>
   </div>
 
   <footer class="hint no-print">التاريخ ورقم القائمة والبنود قابلة للتعديل مباشرة على الصفحة. الإجمالي يُحسب تلقائياً ويمكن كتابته يدوياً عند الحاجة. لحفظ الملف كـ PDF: اضغط "حفظ PDF" ثم اختر "Save as PDF" / "حفظ بصيغة PDF" من قائمة الطابعة في نافذة الطباعة.</footer>
@@ -463,6 +474,43 @@
     return result;
   }
 
+  /* ---------------- thousands-separator formatting ---------------- */
+  function addThousands(str){
+    return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  function formatAmountValue(raw){
+    var s = String(raw == null ? '' : raw).replace(/[^0-9.]/g, '');
+    if(s === '') return '';
+    var dot = s.indexOf('.');
+    var intPart, decPart = null;
+    if(dot === -1){
+      intPart = s;
+    }else{
+      intPart = s.slice(0, dot);
+      decPart = s.slice(dot+1).replace(/\./g,'').slice(0,2);
+    }
+    if(intPart === '' && decPart !== null) intPart = '0';
+    return addThousands(intPart) + (decPart !== null ? '.' + decPart : '');
+  }
+  function formatAmountField(el){
+    var raw = el.value;
+    var caret = el.selectionStart;
+    if(caret === null || caret === undefined) caret = raw.length;
+    var before = raw.slice(0, caret);
+    var digitsBefore = (before.match(/[0-9]/g) || []).length;
+
+    var formatted = formatAmountValue(raw);
+    if(formatted === raw) return;
+
+    el.value = formatted;
+    var pos = 0, count = 0;
+    while(pos < formatted.length && count < digitsBefore){
+      if(/[0-9]/.test(formatted.charAt(pos))) count++;
+      pos++;
+    }
+    try{ el.setSelectionRange(pos, pos); }catch(e){}
+  }
+
   /* ---------------- rows ---------------- */
   function addRow(desc, amount){
     var tr = document.createElement('tr');
@@ -476,9 +524,20 @@
     var tdAmt = document.createElement('td');
     tdAmt.className='amount-cell';
     var inAmt = document.createElement('input');
-    inAmt.type='number'; inAmt.step='0.01'; inAmt.className='row-amount';
-    inAmt.value = (amount!==undefined && amount!=='') ? amount : '';
-    inAmt.addEventListener('input', function(){ recalcTotal(); saveState(); });
+    inAmt.type='text';
+    inAmt.inputMode='decimal';
+    inAmt.autocomplete='off';
+    inAmt.className='row-amount';
+    inAmt.value = (amount!==undefined && amount!==null && amount!=='') ? formatAmountValue(amount) : '';
+    inAmt.addEventListener('input', function(){
+      formatAmountField(inAmt);
+      recalcTotal();
+      saveState();
+    });
+    inAmt.addEventListener('blur', function(){
+      formatAmountField(inAmt);
+      saveState();
+    });
     tdAmt.appendChild(inAmt);
 
     var tdDel = document.createElement('td');
