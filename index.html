@@ -17,7 +17,6 @@
     --stamp-soft:#333333;
     --brass:#000000;
     --muted:#555555;
-    --ok-bg:#EFEFEF;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -144,9 +143,11 @@
     color:#FFFFFF;
     font-family:'Amiri', serif;
     font-weight:700;
-    font-size:18px;
-    padding:10px 8px;
+    font-size:22px;
+    padding:12px 8px;
     border:1px solid #000;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
   }
   table.items td{
     border:1px solid var(--line);
@@ -187,31 +188,36 @@
     border:none;
     border-top:3px double var(--ink);
     font-weight:700;
-    font-size:19px;
-    padding:12px 10px;
+    font-size:22px;
+    padding:14px 10px;
   }
   tfoot .total-row td:first-child{
     background:#000;
     color:#FFFFFF;
     text-align:center;
     font-family:'Amiri', serif;
-    font-size:20px;
+    font-size:24px;
     border-top:3px double var(--ink);
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
   }
   .currency-tag{font-weight:700; color:var(--brass); margin-left:6px; direction:ltr;}
   .total-input{
     border:none; background:transparent; text-align:center;
-    font-family:inherit; font-weight:700; font-size:19px; color:var(--ink);
+    font-family:inherit; font-weight:700; font-size:22px; color:var(--ink);
     width:70%; direction:ltr;
   }
   .total-input:focus{outline:none; background:rgba(0,0,0,.08); border-radius:2px;}
-  .total-input::placeholder{color:#AAAAAA; font-weight:600;}
 
-  .words-line{
-    margin-top:24px;
-    font-weight:700;
+  /* words row inside the table */
+  tfoot .words-row td{
+    border:none;
+    border-top:1px solid var(--line);
+    border-bottom:3px double var(--ink);
+    padding:14px 10px;
     text-align:center;
-    font-size:17px;
+    font-weight:700;
+    font-size:18px;
     line-height:1.9;
   }
   .words-editable{
@@ -258,11 +264,11 @@
       padding:0;
     }
     .sheet::before{display:none;}
-    header.letterhead, section.meta, .words-line, .copyright, tfoot{
+    header.letterhead, section.meta, .copyright{
       break-inside:avoid; page-break-inside:avoid;
     }
 
-    /* --- enlarged letterhead --- */
+    /* --- letterhead --- */
     .bismillah{font-size:15px; margin:0 0 4px;}
     header.letterhead h1{font-size:23px; margin:0 0 4px;}
     .addr{font-size:13px; margin:1px 0;}
@@ -270,7 +276,7 @@
     .email{font-size:12.5px;}
     .rule{height:4px; margin:10px 0 12px;}
 
-    /* --- enlarged meta block --- */
+    /* --- meta block --- */
     section.meta{font-size:14px; line-height:1.6;}
     .meta-row{margin-bottom:6px;}
     .salute{font-size:14.5px; margin:2px 0 1px;}
@@ -278,20 +284,31 @@
     .greeting{margin:2px 0 8px;}
     .subject{font-size:17px; margin:2px 0 10px;}
 
-    /* --- enlarged table --- */
+    /* --- table --- */
     table.items{ break-inside:auto; margin-top:2px; font-size:14px; }
     table.items thead{ display:table-header-group; }
-    table.items tfoot{ display:table-footer-group; }
     table.items tbody tr{ break-inside:avoid; page-break-inside:avoid; }
-    table.items th{ padding:5px 6px; font-size:15.5px; }
+    table.items th{
+      padding:8px 6px;
+      font-size:18px;
+      background:#000 !important;
+      color:#FFFFFF !important;
+      -webkit-print-color-adjust:exact;
+      print-color-adjust:exact;
+    }
     table.items td{ padding:4px 6px; }
     td input.row-desc, td input.row-amount{ padding:0 4px; }
-    tfoot .total-row td{ padding:7px 8px; font-size:15px; }
-    tfoot .total-row td:first-child{ font-size:15.5px; }
-
-    /* --- enlarged words + copyright --- */
-    .words-line{ margin-top:12px; font-size:13.5px; line-height:1.5; }
+    tfoot .total-row td{ padding:9px 8px; font-size:18px; }
+    tfoot .total-row td:first-child{
+      font-size:20px;
+      background:#000 !important;
+      color:#FFFFFF !important;
+      -webkit-print-color-adjust:exact;
+      print-color-adjust:exact;
+    }
+    tfoot .words-row td{ padding:10px 8px; font-size:15px; line-height:1.5; }
     .words-editable:empty::before{content:'';}
+
     .copyright{ margin-top:8px; font-size:9.5px; }
 
     .no-print{ display:none !important; }
@@ -333,7 +350,7 @@
       <p class="salute">السيد/ <input type="text" id="clientName" class="inline-input wide" placeholder="اسم العميل أو الجهة"></p>
       <p class="honor">المحترم</p>
       <p class="greeting">تحية طيبة</p>
-      <p class="subject"><input type="text" id="subjectLine" class="inline-input full" placeholder="عن تخليص وارسال ..."></p>
+      <p class="subject"><input type="text" id="subjectLine" class="inline-input full" placeholder="قائمة صرف عن تخليص وإرسال ..."></p>
     </section>
 
     <table class="items">
@@ -356,17 +373,20 @@
         <tr class="total-row">
           <td>الجملـــــــــــــــــة</td>
           <td class="qirsh-cell">
-            <input type="text" id="totalQirshInput" class="total-input" placeholder="00">
+            <input type="text" id="totalQirshInput" class="total-input">
           </td>
           <td class="amount-cell">
-            <span class="currency-tag">SDG</span><input type="text" id="totalInput" class="total-input" placeholder="0.00">
+            <span class="currency-tag">SDG</span><input type="text" id="totalInput" class="total-input">
           </td>
           <td class="no-print"></td>
         </tr>
+        <tr class="words-row">
+          <td colspan="4">
+            ((<span id="wordsText" contenteditable="true" class="words-editable"></span>))
+          </td>
+        </tr>
       </tfoot>
     </table>
-
-    <p class="words-line">((<span id="wordsText" contenteditable="true" class="words-editable"></span>))</p>
 
     <p class="copyright">Powered by AlgalyAlhaj for digital solutions</p>
   </div>
@@ -380,22 +400,21 @@
   var rowsBody   = document.getElementById('rowsBody');
   var totalInput = document.getElementById('totalInput');
   var totalQirshInput = document.getElementById('totalQirshInput');
-  var wordsText  = document.getElementById('wordsText');
   var dateInput  = document.getElementById('dateInput');
 
   var DEFAULT_ROWS = [
     ["إذن تسليم رقم", "", ""],
     ["نقل الحاوية للكشف", "", ""],
     ["شهادة جمركية رقم", "", ""],
-    ["رسوم جمركية الايصال رقم", "", ""],
+    ["رسوم جمركية الإيصال رقم", "", ""],
     ["فاتورة الموانئ رقم", "", ""],
-    ["فورمات باب اشراف حركة عربات", "", ""],
-    ["ارضيات الشركة ايصال رقم", "", ""],
+    ["فورمات ٥٤ باب اشراف حركة حاويات", "", ""],
+    ["ارضيات الشركة إيصال رقم", "", ""],
     ["عمال كشف", "", ""],
     ["نقل خاص للكشف", "", ""],
     ["إجراء بالتعريفة خاص", "", ""],
     ["رسوم جودة الإيصال رقم", "", ""],
-    ["رسوم الدمغة الولائية", "", ""],
+    ["رسوم الدفعة الولائية", "", ""],
     ["طباعة وتصوير مستندات", "", ""],
     ["ترحيل كشاف", "", ""],
     ["منصرفات متنوعة", "", ""],
@@ -459,7 +478,6 @@
     inQirsh.className='row-amount row-qirsh';
     inQirsh.value = (qirsh!==undefined && qirsh!==null && qirsh!=='') ? qirsh : '';
     inQirsh.addEventListener('input', function(){
-      // فقط أرقام حتى خانتين
       var cleaned = inQirsh.value.replace(/[^0-9]/g,'').slice(0,2);
       if(cleaned !== inQirsh.value) inQirsh.value = cleaned;
     });
@@ -541,7 +559,7 @@
     document.getElementById('subjectLine').value='';
     totalInput.value='';
     totalQirshInput.value='';
-    wordsText.textContent='';
+    document.getElementById('wordsText').textContent='';
     loadDefaultRows();
     document.getElementById('btnSetDate').click();
   });
@@ -565,7 +583,7 @@
     document.title = 'قائمة صرف - الغالي الحاج لخدمات التخليص والترحيل';
   });
 
-  /* ---------------- initial load (no persistence) ---------------- */
+  /* ---------------- initial load ---------------- */
   loadDefaultRows();
   document.getElementById('btnSetDate').click();
 })();
