@@ -59,14 +59,6 @@
   }
   .toolbar button.primary:hover{background:var(--stamp-soft);}
   .toolbar .spacer{flex:1;}
-  .toolbar .status{
-    font-size:12.5px;
-    color:var(--ink-soft);
-    background:#FFFFFF;
-    border:1px dashed var(--line);
-    padding:6px 10px;
-    border-radius:3px;
-  }
 
   /* ---------- Sheet ---------- */
   .sheet{
@@ -115,10 +107,6 @@
   .salute{font-weight:700; font-size:18px; margin:4px 0 2px;}
   .honor{font-weight:700; margin:0 0 10px; padding-right:2px;}
   .greeting{font-weight:700; text-align:center; margin:4px 0 14px;}
-  .list-title{
-    text-align:center; font-weight:700; font-size:20px;
-    text-decoration:underline; margin:0 0 8px;
-  }
   .subject{
     text-align:center; font-weight:700; font-size:21px; margin:4px 0 22px;
   }
@@ -139,7 +127,6 @@
     border-bottom:1px solid var(--stamp);
     background:rgba(0,0,0,.07);
   }
-  .inline-input.small{width:70px; text-align:center;}
   .inline-input.wide{width:280px;}
   .inline-input.full{width:100%; text-align:center; font-size:21px; font-weight:700;}
   #dateInput{width:160px; text-align:center; font-weight:700;}
@@ -150,6 +137,7 @@
     border-collapse:collapse;
     margin-top:6px;
     font-size:16px;
+    table-layout:fixed;
   }
   table.items th{
     background:#000;
@@ -167,6 +155,7 @@
   }
   table.items tbody tr:nth-child(even){background:rgba(0,0,0,.04);}
   td.amount-cell{text-align:center; direction:ltr;}
+  td.qirsh-cell{text-align:center; direction:ltr;}
   td input.row-desc{
     border:none; background:transparent; width:100%;
     font-family:inherit; font-size:inherit; color:inherit;
@@ -287,7 +276,6 @@
     .salute{font-size:14.5px; margin:2px 0 1px;}
     .honor{margin:0 0 4px;}
     .greeting{margin:2px 0 8px;}
-    .list-title{font-size:15.5px; margin:0 0 4px;}
     .subject{font-size:17px; margin:2px 0 10px;}
 
     /* --- enlarged table --- */
@@ -325,7 +313,6 @@
     <button id="btnSetDate">تعيين تاريخ اليوم</button>
     <button id="btnNew">قائمة جديدة</button>
     <span class="spacer"></span>
-    <span class="status" id="statusText">يُحفظ تلقائياً في هذا المتصفح</span>
     <button id="btnPrint">🖨️ طباعة</button>
     <button id="btnPdf" class="primary">⭳ حفظ PDF</button>
   </div>
@@ -346,19 +333,20 @@
       <p class="salute">السيد/ <input type="text" id="clientName" class="inline-input wide" placeholder="اسم العميل أو الجهة"></p>
       <p class="honor">المحترم</p>
       <p class="greeting">تحية طيبة</p>
-      <p class="list-title">قائمة صرف رقم (( <input type="text" id="listNumber" class="inline-input small" placeholder="—"> ))</p>
       <p class="subject"><input type="text" id="subjectLine" class="inline-input full" placeholder="عن تخليص وارسال ..."></p>
     </section>
 
     <table class="items">
       <colgroup>
-        <col style="width:58%">
-        <col style="width:34%">
-        <col style="width:38px">
+        <col style="width:50%">   <!-- البيان -->
+        <col style="width:12%">   <!-- قرش -->
+        <col style="width:30%">   <!-- جنيه سوداني -->
+        <col style="width:38px">  <!-- حذف -->
       </colgroup>
       <thead>
         <tr>
           <th>البيـــــــــــــــــــــــان</th>
+          <th>قرش</th>
           <th>جنيه سوداني</th>
           <th class="no-print"></th>
         </tr>
@@ -367,6 +355,9 @@
       <tfoot>
         <tr class="total-row">
           <td>الجملـــــــــــــــــة</td>
+          <td class="qirsh-cell">
+            <input type="text" id="totalQirshInput" class="total-input" placeholder="00">
+          </td>
           <td class="amount-cell">
             <span class="currency-tag">SDG</span><input type="text" id="totalInput" class="total-input" placeholder="0.00">
           </td>
@@ -380,7 +371,7 @@
     <p class="copyright">Powered by AlgalyAlhaj for digital solutions</p>
   </div>
 
-  <footer class="hint no-print">التاريخ ورقم القائمة والبنود والإجمالي قابلة للكتابة مباشرة على الصفحة. لحفظ الملف كـ PDF: اضغط "حفظ PDF" ثم اختر "Save as PDF" / "حفظ بصيغة PDF" من قائمة الطابعة في نافذة الطباعة.</footer>
+  <footer class="hint no-print">التاريخ والبنود والإجمالي قابلة للكتابة مباشرة على الصفحة. لحفظ الملف كـ PDF: اضغط "حفظ PDF" ثم اختر "Save as PDF" / "حفظ بصيغة PDF" من قائمة الطابعة في نافذة الطباعة.</footer>
 
 <script>
 (function(){
@@ -388,100 +379,28 @@
 
   var rowsBody   = document.getElementById('rowsBody');
   var totalInput = document.getElementById('totalInput');
+  var totalQirshInput = document.getElementById('totalQirshInput');
   var wordsText  = document.getElementById('wordsText');
   var dateInput  = document.getElementById('dateInput');
-  var statusText = document.getElementById('statusText');
 
   var DEFAULT_ROWS = [
-    ["إذن تسليم رقم", ""],
-    ["نقل الحاوية للكشف", ""],
-    ["شهادة جمركية رقم", ""],
-    ["رسوم جمركية الايصال رقم", ""],
-    ["فاتورة الموانئ رقم", ""],
-    ["فورمات باب اشراف حركة عربات", ""],
-    ["ارضيات الشركة ايصال رقم", ""],
-    ["عمال كشف", ""],
-    ["نقل خاص للكشف", ""],
-    ["إجراء بالتعريفة خاص", ""],
-    ["رسوم جودة الإيصال رقم", ""],
-    ["رسوم الدمغة الولائية", ""],
-    ["طباعة وتصوير مستندات", ""],
-    ["ترحيل كشاف", ""],
-    ["منصرفات متنوعة", ""],
-    ["عمولة", ""]
+    ["إذن تسليم رقم", "", ""],
+    ["نقل الحاوية للكشف", "", ""],
+    ["شهادة جمركية رقم", "", ""],
+    ["رسوم جمركية الايصال رقم", "", ""],
+    ["فاتورة الموانئ رقم", "", ""],
+    ["فورمات باب اشراف حركة عربات", "", ""],
+    ["ارضيات الشركة ايصال رقم", "", ""],
+    ["عمال كشف", "", ""],
+    ["نقل خاص للكشف", "", ""],
+    ["إجراء بالتعريفة خاص", "", ""],
+    ["رسوم جودة الإيصال رقم", "", ""],
+    ["رسوم الدمغة الولائية", "", ""],
+    ["طباعة وتصوير مستندات", "", ""],
+    ["ترحيل كشاف", "", ""],
+    ["منصرفات متنوعة", "", ""],
+    ["عمولة", "", ""]
   ];
-
-  /* =========================================================
-     ملاحظة: دوال تحويل الرقم إلى حروف العربية ما زالت موجودة
-     بالأسفل لكنها غير مستخدمة الآن. الإجمالي والمبلغ كتابةً
-     يُكتبان يدوياً. لإعادة الحساب التلقائي لاحقاً، استخدم
-     amountToWords(sum) داخل مستمع الإدخال.
-     ========================================================= */
-
-  /* ---------------- Arabic number-to-words (unused, kept for later) ---------------- */
-  function groupToWords(num){
-    var ones=['','واحد','اثنان','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة'];
-    var teens=['عشرة','أحد عشر','اثنا عشر','ثلاثة عشر','أربعة عشر','خمسة عشر','ستة عشر','سبعة عشر','ثمانية عشر','تسعة عشر'];
-    var tens=['','','عشرون','ثلاثون','أربعون','خمسون','ستون','سبعون','ثمانون','تسعون'];
-    var hundreds=['','مائة','مئتان','ثلاثمائة','أربعمائة','خمسمائة','ستمائة','سبعمائة','ثمانمائة','تسعمائة'];
-    var parts=[];
-    var h=Math.floor(num/100), r=num%100;
-    if(h>0) parts.push(hundreds[h]);
-    if(r>0){
-      if(r<10) parts.push(ones[r]);
-      else if(r<20) parts.push(teens[r-10]);
-      else{
-        var t=Math.floor(r/10), o=r%10;
-        parts.push(o>0 ? (ones[o]+' و'+tens[t]) : tens[t]);
-      }
-    }
-    return parts.join(' و');
-  }
-  function scaleWord(num, scale){
-    if(!scale) return groupToWords(num);
-    if(num===1) return scale.sing;
-    if(num===2) return scale.dual;
-    if(num>=3 && num<=10) return groupToWords(num)+' '+scale.plur;
-    return groupToWords(num)+' '+scale.sing;
-  }
-  function integerToWords(n){
-    if(n===0) return 'صفر';
-    var scaleDefs=[null,
-      {sing:'ألف',dual:'ألفان',plur:'آلاف'},
-      {sing:'مليون',dual:'مليونان',plur:'ملايين'},
-      {sing:'مليار',dual:'ملياران',plur:'مليارات'},
-      {sing:'تريليون',dual:'تريليونان',plur:'تريليونات'}];
-    var groups=[], x=n;
-    while(x>0){ groups.push(x%1000); x=Math.floor(x/1000); }
-    var words=[];
-    for(var i=groups.length-1;i>=0;i--){
-      if(groups[i]>0) words.push(scaleWord(groups[i], scaleDefs[i]));
-    }
-    return words.join(' و');
-  }
-  function amountToWords(amount){
-    amount = Math.round((amount||0)*100)/100;
-    var intPart = Math.floor(amount);
-    var fracPart = Math.round((amount-intPart)*100);
-    var result = integerToWords(intPart);
-    var currencyWord;
-    if(intPart===1) currencyWord='جنيه سوداني';
-    else if(intPart===2) currencyWord='جنيهان سودانيان';
-    else if(intPart>=3 && intPart<=10) currencyWord='جنيهات سودانية';
-    else currencyWord='جنيه سوداني';
-    result += ' '+currencyWord;
-    if(fracPart>0){
-      var fracWords = integerToWords(fracPart);
-      var qirshWord;
-      if(fracPart===1) qirshWord='قرش';
-      else if(fracPart===2) qirshWord='قرشان';
-      else if(fracPart>=3 && fracPart<=10) qirshWord='قروش';
-      else qirshWord='قرشاً';
-      result += ' و'+fracWords+' '+qirshWord;
-    }
-    result += ' فقط لاغير';
-    return result;
-  }
 
   /* ---------------- thousands-separator formatting ---------------- */
   function addThousands(str){
@@ -521,33 +440,49 @@
   }
 
   /* ---------------- rows ---------------- */
-  function addRow(desc, amount){
+  function addRow(desc, amount, qirsh){
     var tr = document.createElement('tr');
 
+    // البيان
     var tdDesc = document.createElement('td');
     var inDesc = document.createElement('input');
     inDesc.type='text'; inDesc.className='row-desc'; inDesc.value = desc||'';
-    inDesc.addEventListener('input', saveState);
     tdDesc.appendChild(inDesc);
 
+    // قرش
+    var tdQirsh = document.createElement('td');
+    tdQirsh.className='qirsh-cell';
+    var inQirsh = document.createElement('input');
+    inQirsh.type='text';
+    inQirsh.inputMode='numeric';
+    inQirsh.autocomplete='off';
+    inQirsh.className='row-amount row-qirsh';
+    inQirsh.value = (qirsh!==undefined && qirsh!==null && qirsh!=='') ? qirsh : '';
+    inQirsh.addEventListener('input', function(){
+      // فقط أرقام حتى خانتين
+      var cleaned = inQirsh.value.replace(/[^0-9]/g,'').slice(0,2);
+      if(cleaned !== inQirsh.value) inQirsh.value = cleaned;
+    });
+    tdQirsh.appendChild(inQirsh);
+
+    // جنيه سوداني
     var tdAmt = document.createElement('td');
     tdAmt.className='amount-cell';
     var inAmt = document.createElement('input');
     inAmt.type='text';
     inAmt.inputMode='decimal';
     inAmt.autocomplete='off';
-    inAmt.className='row-amount';
+    inAmt.className='row-amount row-sdg';
     inAmt.value = (amount!==undefined && amount!==null && amount!=='') ? formatAmountValue(amount) : '';
     inAmt.addEventListener('input', function(){
       formatAmountField(inAmt);
-      saveState();
     });
     inAmt.addEventListener('blur', function(){
       formatAmountField(inAmt);
-      saveState();
     });
     tdAmt.appendChild(inAmt);
 
+    // حذف
     var tdDel = document.createElement('td');
     tdDel.className='del-cell no-print';
     var btnDel = document.createElement('button');
@@ -555,11 +490,11 @@
     btnDel.textContent='×';
     btnDel.addEventListener('click', function(){
       tr.remove();
-      saveState();
     });
     tdDel.appendChild(btnDel);
 
     tr.appendChild(tdDesc);
+    tr.appendChild(tdQirsh);
     tr.appendChild(tdAmt);
     tr.appendChild(tdDel);
     rowsBody.appendChild(tr);
@@ -567,7 +502,7 @@
 
   function loadDefaultRows(){
     rowsBody.innerHTML='';
-    DEFAULT_ROWS.forEach(function(r){ addRow(r[0], r[1]); });
+    DEFAULT_ROWS.forEach(function(r){ addRow(r[0], r[1], r[2]); });
   }
 
   function formatNumber(n){
@@ -579,14 +514,17 @@
     return isNaN(n) ? 0 : n;
   }
 
-  /* ---------------- total input: manual, no auto-calc ---------------- */
+  /* ---------------- manual total inputs ---------------- */
   totalInput.addEventListener('blur', function(){
     if(totalInput.value.trim() !== '') totalInput.value = formatNumber(parseNumber(totalInput.value));
   });
+  totalQirshInput.addEventListener('input', function(){
+    var cleaned = totalQirshInput.value.replace(/[^0-9]/g,'').slice(0,2);
+    if(cleaned !== totalQirshInput.value) totalQirshInput.value = cleaned;
+  });
 
   document.getElementById('btnAddRow').addEventListener('click', function(){
-    addRow('', '');
-    saveState();
+    addRow('', '', '');
   });
 
   document.getElementById('btnSetDate').addEventListener('click', function(){
@@ -595,27 +533,22 @@
     var m = String(d.getMonth()+1).padStart(2,'0');
     var day = String(d.getDate()).padStart(2,'0');
     dateInput.value = y+'/'+m+'/'+day+'م';
-    saveState();
   });
 
   document.getElementById('btnNew').addEventListener('click', function(){
-    if(!confirm('بدء قائمة جديدة سيمسح رقم القائمة، اسم العميل، الوصف، الإجمالي، وكل البنود الحالية. متابعة؟')) return;
+    if(!confirm('بدء قائمة جديدة سيمسح اسم العميل، الوصف، الإجمالي، وكل البنود الحالية. متابعة؟')) return;
     document.getElementById('clientName').value='';
-    document.getElementById('listNumber').value='';
     document.getElementById('subjectLine').value='';
     totalInput.value='';
+    totalQirshInput.value='';
     wordsText.textContent='';
     loadDefaultRows();
     document.getElementById('btnSetDate').click();
-    saveState();
   });
 
   function setPrintTitle(){
-    // the browser's print dialog / "Save as PDF" uses document.title as the default filename
-    var listNo = document.getElementById('listNumber').value.trim();
     var dateVal = dateInput.value.trim();
     var name = 'قائمة صرف';
-    if(listNo) name += ' ' + listNo;
     if(dateVal) name += ' - ' + dateVal;
     document.title = name;
   }
@@ -632,78 +565,10 @@
     document.title = 'قائمة صرف - الغالي الحاج لخدمات التخليص والترحيل';
   });
 
-  /* ---------------- persistence ---------------- */
-  var STORAGE_KEY = 'algaly_disbursement_list_v1';
-
-  function collectState(){
-    return {
-      company: {
-        bismillah: document.querySelector('.bismillah').textContent,
-        name: document.querySelector('header.letterhead h1').textContent,
-        addr: document.querySelector('.addr').textContent,
-        phones: document.querySelector('.phones').textContent,
-        email: document.querySelector('.email strong').textContent
-      },
-      date: dateInput.value,
-      client: document.getElementById('clientName').value,
-      listNumber: document.getElementById('listNumber').value,
-      subject: document.getElementById('subjectLine').value,
-      rows: Array.from(document.querySelectorAll('#rowsBody tr')).map(function(tr){
-        return [tr.querySelector('.row-desc').value, tr.querySelector('.row-amount').value];
-      }),
-      total: totalInput.value,
-      words: wordsText.textContent
-    };
-  }
-
-  function saveState(){
-    try{
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(collectState()));
-      statusText.textContent = 'محفوظ تلقائياً — ' + new Date().toLocaleTimeString('ar-EG');
-    }catch(e){ /* storage unavailable, ignore */ }
-  }
-
-  function restoreState(){
-    var raw;
-    try{ raw = localStorage.getItem(STORAGE_KEY); }catch(e){ raw = null; }
-    if(!raw){
-      loadDefaultRows();
-      document.getElementById('btnSetDate').click();
-      return;
-    }
-    var s;
-    try{ s = JSON.parse(raw); }catch(e){ s = null; }
-    if(!s){ loadDefaultRows(); return; }
-
-    if(s.company){
-      document.querySelector('.bismillah').textContent = s.company.bismillah || '';
-      document.querySelector('header.letterhead h1').textContent = s.company.name || '';
-      document.querySelector('.addr').textContent = s.company.addr || '';
-      document.querySelector('.phones').textContent = s.company.phones || '';
-      document.querySelector('.email strong').textContent = s.company.email || '';
-    }
-    dateInput.value = s.date || '';
-    document.getElementById('clientName').value = s.client || '';
-    document.getElementById('listNumber').value = s.listNumber || '';
-    document.getElementById('subjectLine').value = s.subject || '';
-
-    rowsBody.innerHTML='';
-    (s.rows && s.rows.length ? s.rows : DEFAULT_ROWS).forEach(function(r){ addRow(r[0], r[1]); });
-
-    // إزالة أي إجمالي قديم محفوظ بقيمة صفر من النسخة السابقة
-    var savedTotal = String(s.total || '').trim();
-    if(savedTotal === '0.00' || savedTotal === '0') savedTotal = '';
-    totalInput.value = savedTotal;
-
-    wordsText.textContent = s.words || '';
-  }
-
-  // save on any edit anywhere in the sheet
-  document.getElementById('sheet').addEventListener('input', saveState);
-  document.getElementById('sheet').addEventListener('blur', saveState, true);
-
-  restoreState();
+  /* ---------------- initial load (no persistence) ---------------- */
+  loadDefaultRows();
+  document.getElementById('btnSetDate').click();
 })();
 </script>
 </body>
-</html>.
+</html>
