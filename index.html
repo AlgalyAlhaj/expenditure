@@ -216,9 +216,7 @@
     width:70%; direction:ltr;
   }
   .total-input:focus{outline:none; background:rgba(0,0,0,.08); border-radius:2px;}
-  button#btnLock{
-    border:none; background:transparent; cursor:pointer; font-size:16px;
-  }
+  .total-input::placeholder{color:#AAAAAA; font-weight:600;}
 
   .words-line{
     margin-top:24px;
@@ -230,10 +228,17 @@
   .words-editable{
     outline:none;
     border-bottom:1px dotted transparent;
+    min-width:120px;
+    display:inline-block;
   }
   .words-editable:focus{
     border-bottom:1px dotted var(--stamp);
     background:rgba(0,0,0,.06);
+  }
+  .words-editable:empty::before{
+    content:'اكتب المبلغ كتابةً هنا';
+    color:#AAAAAA;
+    font-weight:500;
   }
 
   .copyright{
@@ -298,6 +303,7 @@
 
     /* --- enlarged words + copyright --- */
     .words-line{ margin-top:12px; font-size:13.5px; line-height:1.5; }
+    .words-editable:empty::before{content:'';}
     .copyright{ margin-top:8px; font-size:9.5px; }
 
     .no-print{ display:none !important; }
@@ -317,7 +323,6 @@
   <div class="toolbar no-print">
     <button id="btnAddRow">＋ إضافة بند</button>
     <button id="btnSetDate">تعيين تاريخ اليوم</button>
-    <button id="btnRecalc">↺ إعادة الحساب التلقائي</button>
     <button id="btnNew">قائمة جديدة</button>
     <span class="spacer"></span>
     <span class="status" id="statusText">يُحفظ تلقائياً في هذا المتصفح</span>
@@ -363,9 +368,9 @@
         <tr class="total-row">
           <td>الجملـــــــــــــــــة</td>
           <td class="amount-cell">
-            <span class="currency-tag">SDG</span><input type="text" id="totalInput" class="total-input" value="0.00">
+            <span class="currency-tag">SDG</span><input type="text" id="totalInput" class="total-input" placeholder="0.00">
           </td>
-          <td class="no-print"><button id="btnLock" title="تبديل بين الحساب التلقائي واليدوي">🔒</button></td>
+          <td class="no-print"></td>
         </tr>
       </tfoot>
     </table>
@@ -375,7 +380,7 @@
     <p class="copyright">Powered by AlgalyAlhaj for digital solutions</p>
   </div>
 
-  <footer class="hint no-print">التاريخ ورقم القائمة والبنود قابلة للتعديل مباشرة على الصفحة. الإجمالي يُحسب تلقائياً ويمكن كتابته يدوياً عند الحاجة. لحفظ الملف كـ PDF: اضغط "حفظ PDF" ثم اختر "Save as PDF" / "حفظ بصيغة PDF" من قائمة الطابعة في نافذة الطباعة.</footer>
+  <footer class="hint no-print">التاريخ ورقم القائمة والبنود والإجمالي قابلة للكتابة مباشرة على الصفحة. لحفظ الملف كـ PDF: اضغط "حفظ PDF" ثم اختر "Save as PDF" / "حفظ بصيغة PDF" من قائمة الطابعة في نافذة الطباعة.</footer>
 
 <script>
 (function(){
@@ -384,11 +389,8 @@
   var rowsBody   = document.getElementById('rowsBody');
   var totalInput = document.getElementById('totalInput');
   var wordsText  = document.getElementById('wordsText');
-  var btnLock    = document.getElementById('btnLock');
   var dateInput  = document.getElementById('dateInput');
   var statusText = document.getElementById('statusText');
-
-  var isAuto = true;
 
   var DEFAULT_ROWS = [
     ["إذن تسليم رقم", ""],
@@ -409,7 +411,14 @@
     ["عمولة", ""]
   ];
 
-  /* ---------------- Arabic number-to-words ---------------- */
+  /* =========================================================
+     ملاحظة: دوال تحويل الرقم إلى حروف العربية ما زالت موجودة
+     بالأسفل لكنها غير مستخدمة الآن. الإجمالي والمبلغ كتابةً
+     يُكتبان يدوياً. لإعادة الحساب التلقائي لاحقاً، استخدم
+     amountToWords(sum) داخل مستمع الإدخال.
+     ========================================================= */
+
+  /* ---------------- Arabic number-to-words (unused, kept for later) ---------------- */
   function groupToWords(num){
     var ones=['','واحد','اثنان','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة'];
     var teens=['عشرة','أحد عشر','اثنا عشر','ثلاثة عشر','أربعة عشر','خمسة عشر','ستة عشر','سبعة عشر','ثمانية عشر','تسعة عشر'];
@@ -531,7 +540,6 @@
     inAmt.value = (amount!==undefined && amount!==null && amount!=='') ? formatAmountValue(amount) : '';
     inAmt.addEventListener('input', function(){
       formatAmountField(inAmt);
-      recalcTotal();
       saveState();
     });
     inAmt.addEventListener('blur', function(){
@@ -547,7 +555,6 @@
     btnDel.textContent='×';
     btnDel.addEventListener('click', function(){
       tr.remove();
-      recalcTotal();
       saveState();
     });
     tdDel.appendChild(btnDel);
@@ -572,45 +579,13 @@
     return isNaN(n) ? 0 : n;
   }
 
-  function recalcTotal(force){
-    if(!isAuto && !force) return;
-    var sum = 0;
-    document.querySelectorAll('.row-amount').forEach(function(inp){
-      sum += parseNumber(inp.value);
-    });
-    setAuto(true);
-    totalInput.value = formatNumber(sum);
-    wordsText.textContent = amountToWords(sum);
-  }
-
-  function setAuto(state){
-    isAuto = state;
-    btnLock.textContent = isAuto ? '🔒' : '🔓';
-    btnLock.title = isAuto ? 'الإجمالي تلقائي — اضغط للتحويل إلى يدوي' : 'الإجمالي يدوي — اضغط لإعادة الحساب التلقائي';
-  }
-
-  totalInput.addEventListener('input', function(){
-    setAuto(false);
-    wordsText.textContent = amountToWords(parseNumber(totalInput.value));
-    saveState();
-  });
+  /* ---------------- total input: manual, no auto-calc ---------------- */
   totalInput.addEventListener('blur', function(){
-    totalInput.value = formatNumber(parseNumber(totalInput.value));
-  });
-
-  btnLock.addEventListener('click', function(){
-    if(isAuto){ setAuto(false); }
-    else { recalcTotal(true); }
-    saveState();
+    if(totalInput.value.trim() !== '') totalInput.value = formatNumber(parseNumber(totalInput.value));
   });
 
   document.getElementById('btnAddRow').addEventListener('click', function(){
     addRow('', '');
-    saveState();
-  });
-
-  document.getElementById('btnRecalc').addEventListener('click', function(){
-    recalcTotal(true);
     saveState();
   });
 
@@ -624,13 +599,14 @@
   });
 
   document.getElementById('btnNew').addEventListener('click', function(){
-    if(!confirm('بدء قائمة جديدة سيمسح رقم القائمة، اسم العميل، الوصف، وكل البنود الحالية. متابعة؟')) return;
+    if(!confirm('بدء قائمة جديدة سيمسح رقم القائمة، اسم العميل، الوصف، الإجمالي، وكل البنود الحالية. متابعة؟')) return;
     document.getElementById('clientName').value='';
     document.getElementById('listNumber').value='';
     document.getElementById('subjectLine').value='';
+    totalInput.value='';
+    wordsText.textContent='';
     loadDefaultRows();
     document.getElementById('btnSetDate').click();
-    recalcTotal(true);
     saveState();
   });
 
@@ -676,7 +652,6 @@
         return [tr.querySelector('.row-desc').value, tr.querySelector('.row-amount').value];
       }),
       total: totalInput.value,
-      isAuto: isAuto,
       words: wordsText.textContent
     };
   }
@@ -694,7 +669,6 @@
     if(!raw){
       loadDefaultRows();
       document.getElementById('btnSetDate').click();
-      recalcTotal(true);
       return;
     }
     var s;
@@ -716,10 +690,12 @@
     rowsBody.innerHTML='';
     (s.rows && s.rows.length ? s.rows : DEFAULT_ROWS).forEach(function(r){ addRow(r[0], r[1]); });
 
-    setAuto(s.isAuto !== undefined ? s.isAuto : true);
-    totalInput.value = s.total || '0.00';
+    // إزالة أي إجمالي قديم محفوظ بقيمة صفر من النسخة السابقة
+    var savedTotal = String(s.total || '').trim();
+    if(savedTotal === '0.00' || savedTotal === '0') savedTotal = '';
+    totalInput.value = savedTotal;
+
     wordsText.textContent = s.words || '';
-    if(isAuto) recalcTotal(true);
   }
 
   // save on any edit anywhere in the sheet
